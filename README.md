@@ -2,8 +2,8 @@
 
 I frequently have this problem when linking
 `<archive>(<file>):<mangled symbol> undefined reference to <unmangled symbol>`.
-This tool just finds which object, given a list, defines the given symbol so I
-can link against it.
+Finds which object references/defines a symbol given the symbol and list of
+objects/directories.
 
 Example linker error:
 ```
@@ -16,11 +16,11 @@ Usage: `./find_symbol.py <symbol> [directories/files]`
 
 Takes the symbol you're searching for (unmangled), and a list of directories
 or files to search (searching the current working directory if these aren't
-specified).
+specified). Prints the symbol type (from `nm`) and path to object file.
 
 Example:
 ```sh
-./find_symbol.py clang::DiagnosticConsumer::IncludeInDiagnosticCounts ~/llvm/build/lib
+$ ./find_symbol.py clang::DiagnosticConsumer::IncludeInDiagnosticCounts ~/llvm/build/lib
 found clang::DiagnosticConsumer::IncludeInDiagnosticCounts in:
 t /home/nick/llvm/build/lib/libclang.so.8svn
 U /home/nick/llvm/build/lib/libclangFrontend.aT /home/nick/llvm/build/lib/libclangBasic.a
@@ -44,6 +44,11 @@ found clang::DiagnosticConsumer::IncludeInDiagnosticCounts in:
 T libclangBasic.a
 t libclang.so
 ```
+
+## Symbol Type
+
+See `man 1 nm`, but `T` is a global/external/public definition, `t` is private
+definition, and `U` is undefined but referenced.
 
 ## License
 
